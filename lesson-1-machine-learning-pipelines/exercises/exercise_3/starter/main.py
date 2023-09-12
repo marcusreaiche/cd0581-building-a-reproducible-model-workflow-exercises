@@ -1,7 +1,14 @@
+import logging
 import mlflow
 import os
 import hydra
 from omegaconf import DictConfig
+
+
+logging.basicConfig(format="%(asctime)-15s %(message)s",
+                    level=logging.INFO)
+logger = logging.getLogger()
+
 
 
 # This automatically reads in the configuration
@@ -15,6 +22,7 @@ def go(config: DictConfig):
     # You can get the path at the root of the MLflow project with this:
     root_path = hydra.utils.get_original_cwd()
 
+    logger.info("Run download_data component")
     _ = mlflow.run(
         os.path.join(root_path, "download_data"),
         "main",
@@ -33,6 +41,17 @@ def go(config: DictConfig):
     # to the "process_data" component
     ##################
 
+    logger.info("Run process_data component")
+    _ = mlflow.run(
+        os.path.join(root_path, "process_data"),
+        "main",
+        parameters={
+            "input_artifact": "iris.csv:latest",
+            "artifact_name": "clean_data.csv",
+            "artifact_type": "process_data",
+            "artifact_description": "Process data"
+        },
+    )
 
 
 if __name__ == "__main__":
