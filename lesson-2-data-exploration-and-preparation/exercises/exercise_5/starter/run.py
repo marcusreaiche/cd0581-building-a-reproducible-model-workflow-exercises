@@ -11,10 +11,32 @@ logger = logging.getLogger()
 
 def go(args):
 
-    run = wandb.init(project="exercise_5", job_type="process_data")
-
-    ## YOUR CODE HERE
-    pass
+    with wandb.init(project="exercise_5", job_type="process_data") as run:
+        ## YOUR CODE HERE
+        # Fetch artifact
+        logger.info(f'Fetch artifact {args.input_artifact}')
+        artifact = run.use_artifact(args.input_artifact)
+        df = pd.read_parquet(artifact.file())
+        # Preprocess data
+        logger.info('Do preprocessing')
+        df = (df
+            # drop duplicates
+            .drop_duplicates()
+            .reset_index(drop=True)
+            # fill nans
+            .fillna(dict(title='',
+                        song_name=''))
+            # Create text_feaure
+            .assign(text_feature=lambda df: df.title + ' ' + df.song_name))
+        # Save clean data
+        df.to_csv(args.artifact_name)
+        # Upload artifact
+        logger.info(f'Upload artifact {args.artifact_name}')
+        artifact = wandb.Artifact(name=args.artifact_name,
+                                description=args.artifact_description,
+                                type=args.artifact_type)
+        artifact.add_file(args.artifact_name)
+        run.log_artifact(artifact)
 
 
 if __name__ == "__main__":
@@ -31,11 +53,17 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--artifact_name", type=str, help="Name for the artifact", required=True
+        "--artifact_name",
+        type=str,
+        help="Name for the artifact",
+        required=True
     )
 
     parser.add_argument(
-        "--artifact_type", type=str, help="Type for the artifact", required=True
+        "--artifact_type",
+        type=str,
+        help="Type for the artifact",
+        required=True
     )
 
     parser.add_argument(
