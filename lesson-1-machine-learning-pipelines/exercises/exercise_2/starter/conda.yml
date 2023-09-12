@@ -1,0 +1,11 @@
+name: lesson-1-exercise-2
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.8.12
+  - requests=2.24.0
+  - pip=20.3.3
+  - pip:
+    - wandb==0.10.21
+    - protobuf==3.20.*
