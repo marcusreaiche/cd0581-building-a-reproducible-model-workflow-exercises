@@ -1,0 +1,17 @@
+# Python version required to run the project.
+python: "3.8.12"
+# Dependencies required to build the project.
+build_dependencies:
+  - pip==20.3.3
+# Dependencies required to run the project.
+dependencies:
+  - jupyterlab==3.0.12
+  - seaborn==0.11.1
+  - pandas==1.2.3
+  - pandas-profiling==3.6.6
+  - pyarrow==2.0
+  - wandb==0.10.21
+  - protobuf==3.20
+  - ipywidgets
+  - jupyter_contrib_nbextensions
+
