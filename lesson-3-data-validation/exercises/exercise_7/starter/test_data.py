@@ -44,7 +44,8 @@ def test_column_presence_and_type(data):
     # Check that the columns are of the right dtype
     for col_name, format_verification_funct in required_columns.items():
 
-        assert format_verification_funct(data[col_name]), f"Column {col_name} failed test {format_verification_funct}"
+        assert (format_verification_funct(data[col_name]),
+                f"Column {col_name} failed test {format_verification_funct}")
 
 
 def test_class_names(data):
@@ -72,6 +73,7 @@ def test_class_names(data):
     # HINT: you can use the .isin method of pandas, and .all to check that the condition
     # is true for every row. For example, df['one'].isin(['a','b','c']).all() is True if
     # all values in column "one" are contained in the list 'a', 'b', 'c'
+    assert data.genre.isin(known_classes).all()
 
 
 def test_column_ranges(data):
@@ -95,4 +97,8 @@ def test_column_ranges(data):
         # YOUR CODE HERE: check that the values in the column col_name are within the expected range
         # HINT: look at the .between method of pandas, and then use .all() like in the previous
         # test
-        pass
+        assert (data[col_name].dropna().between(minimum, maximum).all(),
+                f"{col_name} has values out of range\n" +
+                f"The expected range is ({minimum}, {maximum})\n" +
+                f"Minimum value: {data[col_name].min()}\n" +
+                f"Maximum value: {data[col_name].max()}\n")
