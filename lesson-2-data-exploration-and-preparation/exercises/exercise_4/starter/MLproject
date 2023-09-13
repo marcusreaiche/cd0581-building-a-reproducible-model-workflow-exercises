@@ -1,0 +1,7 @@
+name: exercise_4
+python_env: python_env.yaml
+
+entry_points:
+  main:
+    command: >-
+      jupyter nbextension enable --py widgetsnbextension && jupyter lab
