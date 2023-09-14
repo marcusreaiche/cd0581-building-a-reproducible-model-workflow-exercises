@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import os
 import argparse
 import logging
 import pandas as pd
@@ -17,7 +18,7 @@ def go(args):
 
     logger.info("Downloading and reading test artifact")
     ## Get the args.test_data artifact from W&B locally
-    test_data_path = ## YOUR CODE HERE
+    test_data_path = run.use_artifact(args.test_data).file()
     df = pd.read_csv(test_data_path, low_memory=False)
 
     # Extract the target from the features
@@ -29,13 +30,15 @@ def go(args):
 
     ## Get the args.model_export artifact from W&B locally. Since this artifact contains a directory
     # and not a single file, you will have to use .download() instead of .file()
-    model_export_path = ## YOUR CODE HERE
+    model_export_path = os.path.join(
+        run.use_artifact(args.model_export).download(),
+        "model_export")
 
     # Load the model using mlflow.sklearn.load_model
-    pipe = ## YOUR CODE HERE
+    pipe = mlflow.sklearn.load_model(model_export_path)
 
     # Compute the prediction from the model using .predict_proba on the test set
-    pred_proba = ## YOUR CODE HERE
+    pred_proba = pipe.predict_proba(X_test)
 
     logger.info("Scoring")
     score = roc_auc_score(y_test, pred_proba, average="macro", multi_class="ovo")
